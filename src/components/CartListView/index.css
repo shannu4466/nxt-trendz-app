@@ -1,0 +1,28 @@
+.cart-list {
+  padding-left: 0px;
+  font-family: 'Roboto';
+}
+.totalcost {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+.total-cost {
+  border: 1px solid black;
+  border-radius: 20px;
+  padding: 20px;
+  width: 300px;
+}
+.checkout-btn {
+  background-color: #0967d2;
+  border-radius: 10px;
+  color: white;
+  border: none;
+  padding: 10px;
+  width: 150px;
+  cursor: pointer;
+}
+.no-of-items {
+  font-size: 20px;
+}
