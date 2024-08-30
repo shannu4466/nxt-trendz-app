@@ -9,12 +9,23 @@ import Cart from './components/Cart'
 import NotFound from './components/NotFound'
 import ProtectedRoute from './components/ProtectedRoute'
 import CartContext from './context/CartContext'
+import Payments from './components/Payments'
 
 import './App.css'
 
 class App extends Component {
   state = {
-    cartList: [],
+    cartList: [
+      {
+        id: 100,
+        imageUrl: '',
+        title: 'product',
+        brand: 'xyz',
+        quantity: 2,
+        price: 100,
+      },
+    ],
+    selectdOption: '',
   }
 
   addCartItem = product => {
@@ -82,19 +93,25 @@ class App extends Component {
     }
   }
 
+  onChangePaymentOption = selectdOption => {
+    this.setState({selectdOption})
+  }
+
   render() {
-    const {cartList} = this.state
+    const {cartList, selectdOption} = this.state
 
     return (
       <BrowserRouter>
         <CartContext.Provider
           value={{
             cartList,
+            selectdOption,
             addCartItem: this.addCartItem,
             deleteCartItem: this.deleteCartItem,
             incrementCartItemQuantity: this.incrementCartItemQuantity,
             decrementCartItemQuantity: this.decrementCartItemQuantity,
             removeAllCartItems: this.removeAllCartItems,
+            onChangePaymentOption: this.onChangePaymentOption,
           }}
         >
           <Switch>
@@ -107,6 +124,11 @@ class App extends Component {
               component={ProductItemDetails}
             />
             <ProtectedRoute exact path="/cart" component={Cart} />
+            <ProtectedRoute
+              exact
+              path="/OYMSWdJh1S5dzmpLNcsG/payments"
+              component={Payments}
+            />
             <Route path="/not-found" component={NotFound} />
             <Redirect to="not-found" />
           </Switch>

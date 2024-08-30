@@ -10,6 +10,7 @@ dependencies:
   react-loader-spinner: 4.0.0_react-dom@18.3.1+react@18.3.1
   react-router-dom: 5.2.0_react@18.3.1
   react-toastify: 8.2.0_react-dom@18.3.1+react@18.3.1
+  uuid: 10.0.0
 devDependencies:
   eslint-config-airbnb: 18.2.1
   eslint-config-prettier: 8.1.0
@@ -11967,6 +11968,11 @@ packages:
       node: '>= 0.4.0'
     resolution:
       integrity: sha1-n5VxD1CiZ5R7LMwSR0HBAoQn5xM=
+  /uuid/10.0.0:
+    dev: false
+    hasBin: true
+    resolution:
+      integrity: sha512-8XkAphELsDnEGrDxUOHB3RGvXz6TeuYSGEZBOjtTtPm2lwhGBjLgOzLHB63IUWfBpNucQjND6d3AOudO+H3RWQ==
   /uuid/3.4.0:
     deprecated: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
     dev: true
@@ -12611,3 +12617,4 @@ specifiers:
   react-router-dom: 5.2.0
   react-scripts: 4.0.3
   react-toastify: '8'
+  uuid: 10.0.0
