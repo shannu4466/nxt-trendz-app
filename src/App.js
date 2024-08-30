@@ -15,16 +15,7 @@ import './App.css'
 
 class App extends Component {
   state = {
-    cartList: [
-      {
-        id: 100,
-        imageUrl: '',
-        title: 'product',
-        brand: 'xyz',
-        quantity: 2,
-        price: 100,
-      },
-    ],
+    cartList: [],
     selectdOption: '',
   }
 
