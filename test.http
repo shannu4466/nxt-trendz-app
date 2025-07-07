@@ -1,0 +1,23 @@
+GET https://example.com/comments/1
+
+###
+
+GET https://example.com/comments/1
+
+###
+
+
+###
+
+GET https://fakestoreapi.com/products
+Content-Type: application/json
+
+###
+
+POST http://localhost:5000/login
+Content-Type: application/json
+
+{
+    "username": "abcd",
+    "password": "abcde"
+}
