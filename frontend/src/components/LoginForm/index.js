@@ -1,44 +1,42 @@
-import { Component } from 'react'
+import { useState } from 'react'
 import Cookies from 'js-cookie'
-import { Redirect } from 'react-router-dom'
+import { Redirect, withRouter } from 'react-router-dom'
 
 import './index.css'
 
-class LoginForm extends Component {
-  state = {
-    username: '',
-    password: '',
-    showSubmitError: false,
-    errorMsg: '',
-    loginForm: true,
-    createUsername: '',
-    createEmail: '',
-    createPassword: '',
-    showSubmitErrorofCreateAccount: ''
+const LoginForm = (props) => {
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [showSubmitError, setShowSubmitError] = useState(false)
+  const [errorMsg, setErrorMsg] = useState('')
+  const [loginForm, setLoginForm] = useState(true)
+  const [createUsername, setCreateUsername] = useState('')
+  const [createEmail, setCreateEmail] = useState('')
+  const [createPassword, setCreatePassword] = useState('')
+  const [showSubmitErrorOfCreateAccount, setShowSubmitErrorOfCreateAccount] = useState(false) 
+
+  const onChangeUsername = event => {
+    setUsername(event.target.value)
   }
 
-  onChangeUsername = event => {
-    this.setState({ username: event.target.value })
+  const onChangePassword = event => {
+    setPassword(event.target.value)
   }
 
-  onChangePassword = event => {
-    this.setState({ password: event.target.value })
+  const onChangecrUsername = event => {
+    setCreateUsername(event.target.value)
   }
 
-  onChangecrUsername = event => {
-    this.setState({ createUsername: event.target.value })
+  const onChangecrEmail = event => {
+    setCreateEmail(event.target.value)
   }
 
-  onChangecrEmail = event => {
-    this.setState({ createEmail: event.target.value })
+  const onChangecrPassword = event => {
+    setCreatePassword(event.target.value)
   }
 
-  onChangecrPassword = event => {
-    this.setState({ createPassword: event.target.value })
-  }
-
-  onSubmitSuccess = jwtToken => {
-    const { history } = this.props
+  const onSubmitSuccess = jwtToken => {
+    const { history } = props
 
     Cookies.set('jwt_token', jwtToken, {
       expires: 30,
@@ -47,22 +45,25 @@ class LoginForm extends Component {
     history.replace('/')
   }
 
-  onSubmitFailure = errorMsg => {
-    this.setState({ showSubmitError: true, errorMsg })
+  const onSubmitFailure = msg => {
+    setShowSubmitError(true)
+    setErrorMsg(msg)
   }
 
-  onSubmitCreateAccountSuccess = () => {
-    this.props.history.replace("/login")
-    this.setState({ loginForm: true })
+  const onSubmitCreateAccountSuccess = () => {
+    props.history.replace("/login")
+    setLoginForm(true)
+    setShowSubmitErrorOfCreateAccount(false);
+    setErrorMsg(''); 
   }
 
-  onSubmitcreateAccountFailure = errorMsg => {
-    this.setState({ showSubmitErrorofCreateAccount: true, errorMsg })
+  const onSubmitCreateAccountFailure = msg => {
+    setShowSubmitErrorOfCreateAccount(true)
+    setErrorMsg(msg)
   }
 
-  submitForm = async event => {
+  const submitForm = async event => {
     event.preventDefault()
-    const { username, password } = this.state
     const userDetails = { username, password }
     const url = 'http://localhost:5000/login'
     const options = {
@@ -75,15 +76,14 @@ class LoginForm extends Component {
     const response = await fetch(url, options)
     const data = await response.json()
     if (response.ok === true) {
-      this.onSubmitSuccess(data.jwt_token)
+      onSubmitSuccess(data.jwt_token)
     } else {
-      this.onSubmitFailure(data.error_msg)
+      onSubmitFailure(data.error_msg)
     }
   }
 
-  onSubmitCreateAccount = async (event) => {
+  const onSubmitCreateAccount = async (event) => {
     event.preventDefault()
-    const { createUsername, createEmail, createPassword } = this.state
     const userDetails = { username: createUsername, email: createEmail, password: createPassword }
     const url = "http://localhost:5000/register"
     const options = {
@@ -96,14 +96,13 @@ class LoginForm extends Component {
     const response = await fetch(url, options)
     const data = await response.json()
     if (response.ok === true) {
-      this.onSubmitCreateAccountSuccess(data.jwt_token)
+      onSubmitCreateAccountSuccess()
     } else {
-      this.onSubmitcreateAccountFailure(data.error_msg)
+      onSubmitCreateAccountFailure(data.error_msg)
     }
   }
 
-  renderPasswordField = () => {
-    const { password } = this.state
+  const renderPasswordField = () => {
     return (
       <>
         <label className="input-label" htmlFor="password">
@@ -114,15 +113,14 @@ class LoginForm extends Component {
           id="password"
           className="password-input-field"
           value={password}
-          onChange={this.onChangePassword}
+          onChange={onChangePassword}
           placeholder="Password"
         />
       </>
     )
   }
 
-  renderUsernameField = () => {
-    const { username } = this.state
+  const renderUsernameField = () => {
     return (
       <>
         <label className="input-label" htmlFor="username">
@@ -133,110 +131,122 @@ class LoginForm extends Component {
           id="username"
           className="username-input-field"
           value={username}
-          onChange={this.onChangeUsername}
+          onChange={onChangeUsername}
           placeholder="Username"
         />
       </>
     )
   }
 
-  onClickCreateAccount = async (event) => {
+  const onClickCreateAccount = (event) => {
     event.preventDefault()
-    this.setState({ loginForm: false })
+    setLoginForm(false)
+    setShowSubmitError(false); // Clear login error when switching to create account
+    setErrorMsg(''); // Clear error message
   }
 
-  onClickLoginAccount = async (event) => {
+  const onClickLoginAccount = (event) => {
     event.preventDefault()
-    this.setState({ loginForm: true })
+    setLoginForm(true)
+    setShowSubmitErrorOfCreateAccount(false); // Clear create account error when switching to login
+    setErrorMsg(''); // Clear error message
   }
 
-  render() {
-    const { showSubmitError, showSubmitErrorofCreateAccount, errorMsg, loginForm, createUsername, createEmail, createPassword } = this.state
-    const jwtToken = Cookies.get('jwt_token')
-    if (jwtToken !== undefined) {
-      return <Redirect to="/" />
-    }
-    return (
-      <div>
-        <div className="login-form-container">
-          <img
-            src="https://assets.ccbp.in/frontend/react-js/nxt-trendz-logo-img.png"
-            className="login-website-logo-mobile-image"
-            alt="website logo"
-          />
-          <img
-            src="https://assets.ccbp.in/frontend/react-js/nxt-trendz-login-img.png"
-            className="login-image"
-            alt="website login"
-          />
-          <div>
-            <form className="login-form-container-desktop" onSubmit={this.submitForm}>
+  const jwtToken = Cookies.get('jwt_token')
+  if (jwtToken !== undefined) {
+    return <Redirect to="/" />
+  }
+
+  return (
+    <div>
+      <div className="login-form-container">
+        <img
+          src="img/e_cart_logo.png"
+          className="login-website-logo-mobile-image"
+          alt="website logo"
+        />
+        <img
+          src="img/Login_page_image.png"
+          className="login-image"
+          alt="website login"
+        />
+        <div>
+          {/* Main login form */}
+          {loginForm && (
+            <form className="login-form-container-desktop" onSubmit={submitForm}>
               <img
-                src="https://assets.ccbp.in/frontend/react-js/nxt-trendz-logo-img.png"
+                src="img/e_cart_logo.png"
                 className="login-website-logo-desktop-image"
                 alt="website logo"
               />
-              {loginForm && (
-                <div className='abcd'>
-                  <h1 className='login-page-heading'>Login</h1>
-                  <div className="input-container">
-                    {this.renderUsernameField()}
-                  </div>
-                  <div className="input-container">
-                    {this.renderPasswordField()}
-                  </div>
+              <div className='abcd'>
+                <h1 className='login-page-heading'>Login</h1>
+                <div className="input-container">
+                  {renderUsernameField()}
+                </div>
+                <div className="input-container">
+                  {renderPasswordField()}
+                </div>
+                <button type="submit" className="login-button">
+                  Login
+                </button>
+                <div className='forgot-pass-container'>
+                  <button className='create-account' type='button'><p>Forgot Password</p></button>
+                </div>
+                {showSubmitError && <p className="error-message">*{errorMsg}</p>}
+              </div>
+            </form>
+          )}
+
+          {/* Create account form */}
+          {!loginForm && (
+            <form onSubmit={onSubmitCreateAccount} className='form-container'>
+              <img
+                src="img/e_cart_logo.png"
+                className="login-website-logo-desktop-image"
+                alt="website logo"
+              />
+              <div className='dcba'>
+                <h1 className='login-page-heading'>Create Account</h1>
+                <>
+                  <label className="input-label" htmlFor='crUsername'>
+                    Username
+                  </label><br />
+                  <input type='text' placeholder='Enter Username' className='username-input-field' id='crUsername' onChange={onChangecrUsername} value={createUsername} />
+                  <br />
+                  <label className="input-label" htmlFor='crEmail'>
+                    Email
+                  </label><br />
+                  <input type='mail' placeholder='Enter Email' className='username-input-field' id='crEmail' onChange={onChangecrEmail} value={createEmail} />
+                  <br />
+                  <label className="input-label" htmlFor='crPassword'>
+                    Password
+                  </label><br />
+                  <input type='password' placeholder='Enter Password' className='username-input-field' id='crPassword' onChange={onChangecrPassword} value={createPassword} /><br />
                   <button type="submit" className="login-button">
-                    Login
+                    Register
                   </button>
-                  <div className='forgot-pass-container'>
-                    <button className='create-account' type='button'><p>Forgot Password</p></button>
-                  </div>
-                  {showSubmitError && <p className="error-message">*{errorMsg}</p>}
-                </div>
-              )}
+                  {showSubmitErrorOfCreateAccount && <p className="error-message">*{errorMsg}</p>}
+                </>
+              </div>
             </form>
-            <form onSubmit={this.onSubmitCreateAccount} className='form-container'>
-              {!loginForm && (
-                <div className='dcba'>
-                  <h1 className='login-page-heading'>Create Account</h1>
-                  <>
-                    <label className="input-label" htmlFor='crUsername'>
-                      Username
-                    </label><br />
-                    <input type='text' placeholder='Enter Username' className='username-input-field' id='crUsername' onChange={this.onChangecrUsername} value={createUsername} />
-                    <br />
-                    <label className="input-label" htmlFor='crEmail'>
-                      Email
-                    </label><br />
-                    <input type='mail' placeholder='Enter Email' className='username-input-field' id='crEmail' onChange={this.onChangecrEmail} value={createEmail} />
-                    <br />
-                    <label className="input-label" htmlFor='crPassword'>
-                      Password
-                    </label><br />
-                    <input type='password' placeholder='Enter Password' className='username-input-field' id='crPassword' onChange={this.onChangecrPassword} value={createPassword} /><br />
-                    <button type="submit" className="login-button">
-                      Register
-                    </button>
-                    {showSubmitErrorofCreateAccount && <p className="error-message">*{errorMsg}</p>}
-                  </>
-                </div>
-              )}
+          )}
+
+          {/* Toggle buttons for Login/Create Account */}
+          {loginForm && (
+            <form className='account-creation' onSubmit={onClickCreateAccount}>
+              <button className='create-account' type='submit'><p>Don't have account? Create Account</p></button>
             </form>
-            {loginForm && (
-              <form className='account-creation' onSubmit={this.onClickCreateAccount}>
-                <button className='create-account' type='submit'><p>Don't have account? Create Account</p></button>
-              </form>
-            )}
-            {!loginForm && (
-              <form className='account-creation' onSubmit={this.onClickLoginAccount}>
-                <button className='create-account' type='submit'><p>Already have account? Login</p></button>
-              </form>
-            )}
-          </div>
+          )}
+          {!loginForm && (
+            <form className='account-creation' onSubmit={onClickLoginAccount}>
+              <button className='create-account' type='submit'><p>Already have account? Login</p></button>
+            </form>
+          )}
         </div>
       </div>
-    )
-  }
+    </div>
+  )
 }
 
-export default LoginForm
+export default withRouter(LoginForm)

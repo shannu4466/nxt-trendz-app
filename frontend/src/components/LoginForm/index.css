@@ -17,6 +17,7 @@
 }
 
 .login-website-logo-mobile-image {
+  display: none;
   width: 165px;
   margin-top: 50px;
   margin-bottom: 35px;

@@ -1,5 +1,5 @@
 import Cookies from 'js-cookie'
-import {Redirect, Link} from 'react-router-dom'
+import { Redirect, Link } from 'react-router-dom'
 
 import Header from '../Header'
 
@@ -23,11 +23,10 @@ const Home = () => {
             className="home-mobile-img"
           />
           <p className="home-description">
-            Fashion is part of the daily air and it does not quite help that it
-            changes all the time. Clothes have always been a marker of the era
-            and we are in a revolution. Your fashion makes you been seen and
-            heard that way you are. So, celebrate the seasons new and exciting
-            fashion in your own way.
+            Fashion is the whisper of your soul, a dynamic canvas painted anew with each changing season.
+            In every stitch and silhouette, it tells the story of an era, a quiet revolution of self-expression.
+            Embrace the captivating dance of trends, for it is through your unique style that you truly become seen, 
+            profoundly heard, and beautifully, undeniably you.
           </p>
           <Link to="/products">
             <button type="button" className="shop-now-button">

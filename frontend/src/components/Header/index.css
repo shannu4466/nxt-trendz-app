@@ -54,12 +54,17 @@
 }
 
 .website-logo {
-  width: 110px;
+  margin: -50%;
+  margin-left: 2px;
+  height: 130px;
+  width: 130px;
 }
 
 @media screen and (min-width: 768px) {
   .website-logo {
-    width: 165px;
+    margin: -50%;
+    height: 130px;
+    width: 130px;
   }
 }
 

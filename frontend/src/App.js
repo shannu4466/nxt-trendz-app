@@ -1,4 +1,4 @@
-import { Component } from 'react'
+import { useState, useCallback } from 'react'
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom'
 
 import LoginForm from './components/LoginForm'
@@ -13,120 +13,112 @@ import Payments from './components/Payments'
 
 import './App.css'
 
-class App extends Component {
-  state = {
-    cartList: [],
-    selectdOption: '',
-  }
+const App = () => {
+  const [cartList, setCartList] = useState([])
+  const [selectedOption, setSelectedOption] = useState('')
 
-  addCartItem = product => {
-    const { cartList } = this.state
-    const productObject = cartList.find(
-      eachCartItem => eachCartItem.id === product.id,
-    )
+  const addCartItem = useCallback(product => {
+    setCartList(prevCartList => {
+      const productObject = prevCartList.find(
+        eachCartItem => eachCartItem.id === product.id,
+      )
 
-    if (productObject) {
-      this.setState(prevState => ({
-        cartList: prevState.cartList.map(eachCartItem => {
+      if (productObject) {
+        return prevCartList.map(eachCartItem => {
           if (productObject.id === eachCartItem.id) {
             const updatedQuantity = eachCartItem.quantity + product.quantity
             return { ...eachCartItem, quantity: updatedQuantity }
           }
           return eachCartItem
-        }),
-      }))
-    } else {
-      const updatedCartList = [...cartList, product]
-      this.setState({ cartList: updatedCartList })
-    }
-  }
+        })
+      } else {
+        return [...prevCartList, product]
+      }
+    })
+  }, [])
 
-  deleteCartItem = id => {
-    const { cartList } = this.state
-    const updatedCartList = cartList.filter(
-      eachCartItem => eachCartItem.id !== id,
+  const deleteCartItem = useCallback(id => {
+    setCartList(prevCartList =>
+      prevCartList.filter(eachCartItem => eachCartItem.id !== id),
     )
+  }, [])
 
-    this.setState({ cartList: updatedCartList })
-  }
+  const removeAllCartItems = useCallback(() => {
+    setCartList([])
+    setSelectedOption(''); // Clear selected payment option when cart is cleared
+  }, [])
 
-  removeAllCartItems = () => {
-    this.setState({ cartList: [] })
-  }
-
-  incrementCartItemQuantity = id => {
-    this.setState(prevState => ({
-      cartList: prevState.cartList.map(eachCartItem => {
+  const incrementCartItemQuantity = useCallback(id => {
+    setCartList(prevCartList =>
+      prevCartList.map(eachCartItem => {
         if (eachCartItem.id === id) {
           const updatedQuantity = eachCartItem.quantity + 1
           return { ...eachCartItem, quantity: updatedQuantity }
         }
         return eachCartItem
       }),
-    }))
-  }
+    )
+  }, [])
 
-  decrementCartItemQuantity = id => {
-    const { cartList } = this.state
-    const productObject = cartList.find(eachCartItem => eachCartItem.id === id)
-    if (productObject.quantity > 1) {
-      this.setState(prevState => ({
-        cartList: prevState.cartList.map(eachCartItem => {
+  const decrementCartItemQuantity = useCallback(id => {
+    setCartList(prevCartList => {
+      const productObject = prevCartList.find(
+        eachCartItem => eachCartItem.id === id,
+      )
+
+      if (productObject && productObject.quantity > 1) {
+        return prevCartList.map(eachCartItem => {
           if (eachCartItem.id === id) {
             const updatedQuantity = eachCartItem.quantity - 1
             return { ...eachCartItem, quantity: updatedQuantity }
           }
           return eachCartItem
-        }),
-      }))
-    } else {
-      this.deleteCartItem(id)
-    }
-  }
+        })
+      } else {
+        return prevCartList.filter(eachCartItem => eachCartItem.id !== id)
+      }
+    })
+  }, [])
 
-  onChangePaymentOption = selectdOption => {
-    this.setState({ selectdOption })
-  }
+  const onChangePaymentOption = useCallback(option => {
+    setSelectedOption(option)
+  }, [])
 
-  render() {
-    const { cartList, selectdOption } = this.state
-
-    return (
-      <BrowserRouter>
-        <CartContext.Provider
-          value={{
-            cartList,
-            selectdOption,
-            addCartItem: this.addCartItem,
-            deleteCartItem: this.deleteCartItem,
-            incrementCartItemQuantity: this.incrementCartItemQuantity,
-            decrementCartItemQuantity: this.decrementCartItemQuantity,
-            removeAllCartItems: this.removeAllCartItems,
-            onChangePaymentOption: this.onChangePaymentOption,
-          }}
-        >
-          <Switch>
-            <Route exact path="/login" component={LoginForm} />
-            <ProtectedRoute exact path="/" component={Home} />
-            <ProtectedRoute exact path="/products" component={Products} />
-            <ProtectedRoute
-              exact
-              path="/products/:id"
-              component={ProductItemDetails}
-            />
-            <ProtectedRoute exact path="/cart" component={Cart} />
-            <ProtectedRoute
-              exact
-              path="/OYMSWdJh1S5dzmpLNcsG/payments"
-              component={Payments}
-            />
-            <Route path="/not-found" component={NotFound} />
-            <Redirect to="not-found" />
-          </Switch>
-        </CartContext.Provider>
-      </BrowserRouter>
-    )
-  }
+  return (
+    <BrowserRouter>
+      <CartContext.Provider
+        value={{
+          cartList,
+          selectedOption,
+          addCartItem: addCartItem,
+          deleteCartItem: deleteCartItem,
+          incrementCartItemQuantity: incrementCartItemQuantity,
+          decrementCartItemQuantity: decrementCartItemQuantity,
+          removeAllCartItems: removeAllCartItems,
+          onChangePaymentOption: onChangePaymentOption,
+        }}
+      >
+        <Switch>
+          <Route exact path="/login" component={LoginForm} />
+          <ProtectedRoute exact path="/" component={Home} />
+          <ProtectedRoute exact path="/products" component={Products} />
+          <ProtectedRoute
+            exact
+            path="/products/:id"
+            component={ProductItemDetails}
+          />
+          <ProtectedRoute exact path="/cart" component={Cart} />
+          <ProtectedRoute
+            exact
+            path="/OYMSWdJh1S5dzmpLNcsG/payments"
+            component={Payments}
+          />
+          <Route path="/not-found" component={NotFound} />
+          <Redirect to="/not-found" />
+        </Switch>
+      </CartContext.Provider>
+    </BrowserRouter>
+  )
 }
 
 export default App
